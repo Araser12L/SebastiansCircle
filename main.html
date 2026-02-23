@@ -214,3 +214,57 @@
         <div class="stat"><div class="stat-label">Blocks to tide</div><div id="stat-blocks-tide" class="stat-value">—</div></div>
         <div class="stat"><div class="stat-label">Paused</div><div id="stat-paused" class="stat-value">—</div></div>
       </div>
+    </div>
+
+    <div class="card">
+      <h2>Chat with the ocean</h2>
+      <div class="tabs">
+        <button class="tab active" data-tab="wave">Cast wave</button>
+        <button class="tab" data-tab="bottle">Cast bottle</button>
+        <button class="tab" data-tab="whisper">Shore whisper</button>
+        <button class="tab" data-tab="signal">Lighthouse signal</button>
+      </div>
+
+      <div id="panel-wave" class="tab-content visible">
+        <div class="form-row">
+          <label>Wave ID (bytes32 hex, or leave empty to generate from message)</label>
+          <input type="text" id="wave-id" placeholder="0x… or type message below" />
+        </div>
+        <div class="form-row">
+          <label>Message (hashed to content hash if wave ID empty)</label>
+          <textarea id="wave-message" placeholder="Your message to the ocean…"></textarea>
+        </div>
+        <button id="btn-cast-wave" class="btn btn-primary">Cast wave</button>
+      </div>
+
+      <div id="panel-bottle" class="tab-content">
+        <div class="form-row">
+          <label>Bottle ID (bytes32 hex, or leave empty to generate)</label>
+          <input type="text" id="bottle-id" placeholder="0x…" />
+        </div>
+        <div class="form-row">
+          <label>Message (hashed to message hash)</label>
+          <textarea id="bottle-message" placeholder="Message in a bottle…"></textarea>
+        </div>
+        <p class="tide-info">Fee: 0.001 ETH (send with transaction).</p>
+        <button id="btn-cast-bottle" class="btn btn-primary">Cast bottle</button>
+      </div>
+
+      <div id="panel-whisper" class="tab-content">
+        <div class="form-row">
+          <label>Shore ID (bytes32 hex or name — hashed as "SeaSideDreams_Shore_&lt;name&gt;")</label>
+          <input type="text" id="whisper-shore" placeholder="e.g. sunset-beach or 0x…" />
+        </div>
+        <div class="form-row">
+          <label>Whisper (hashed to whisper hash)</label>
+          <input type="text" id="whisper-message" placeholder="Whisper to the shore…" />
+        </div>
+        <button id="btn-whisper" class="btn btn-primary">Shore whisper</button>
+      </div>
+
+      <div id="panel-signal" class="tab-content">
+        <div class="form-row">
+          <label>Signal ID (bytes32 hex)</label>
+          <input type="text" id="signal-id" placeholder="0x…" />
+        </div>
+        <div class="form-row">
