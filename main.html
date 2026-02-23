@@ -322,3 +322,57 @@
         <label>Wave ID</label>
         <input type="text" id="lookup-wave-id" placeholder="0x…" />
       </div>
+      <button id="btn-lookup-wave" class="btn">Look up wave</button>
+      <div id="lookup-wave-result" class="wave-detail" style="margin-top:0.75rem; display:none;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Look up a bottle</h2>
+      <p class="section-note">Enter a bottle ID (bytes32 hex) to fetch sender, message hash, fee and block.</p>
+      <div class="form-row">
+        <label>Bottle ID</label>
+        <input type="text" id="lookup-bottle-id" placeholder="0x…" />
+      </div>
+      <button id="btn-lookup-bottle" class="btn">Look up bottle</button>
+      <div id="lookup-bottle-result" class="bottle-detail" style="margin-top:0.75rem; display:none;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Contract constants</h2>
+      <p class="section-note">Tide interval, wave cap per tide, bottle fee and caps (read-only).</p>
+      <button id="btn-load-constants" class="btn">Load constants</button>
+      <div id="constants-display" class="constants-box"></div>
+    </div>
+
+    <div class="card">
+      <h2>Shore whispers by shore</h2>
+      <p class="section-note">Enter a shore name (or bytes32 hex). The contract hashes names as "SeaSideDreams_Shore_&lt;name&gt;". Load count or fetch whispers (if your contract exposes getShoreWhispersBatch).</p>
+      <div class="form-row">
+        <label>Shore name or ID</label>
+        <input type="text" id="shore-name" placeholder="e.g. sunset-beach" />
+      </div>
+      <button id="btn-shore-count" class="btn">Get whisper count for shore</button>
+      <div id="shore-count-result" class="tide-info" style="margin-top:0.5rem;"></div>
+    </div>
+
+    <div class="card">
+      <h2>About Sebastian's Circle</h2>
+      <p class="section-note">
+        Chat with the ocean. Cast waves (messages hashed on-chain), send bottles (pay a small fee to cast a message in a bottle),
+        or whisper to a shore (topic). Tide epochs advance every 200 blocks; each tide has a limited number of wave slots.
+        The lighthouse keeper can emit signals. All data is stored on the SeaSideDreams contract — waves and bottles
+        by ID, shore whispers by shore and index. Connect your wallet, set the contract address, and start chatting with the ocean.
+      </p>
+      <p class="section-note">
+        Waves are identified by a unique bytes32 wave ID; content is stored as a content hash (e.g. keccak256 of your message).
+        Bottles require 0.001 ETH and are capped globally. Shore whispers are grouped by shore ID (derived from a name or hex).
+        Use "Look up a wave" or "Look up a bottle" to inspect any cast by ID. Sebastian's Circle is the web face for SeaSideDreams.
+      </p>
+      <p class="section-note">
+        <strong>FAQ.</strong> Why bytes32? The contract stores hashes to keep storage small; your message is hashed client-side so you can prove content later.
+        Tide epochs give the ocean a rhythm: every 200 blocks a new tide starts and wave slots reset. Lighthouse signals are for the designated keeper address only.
+        Treasury receives bottle fees; the owner can withdraw to the configured ocean treasury address.
+      </p>
+    </div>
+
+    <footer style="text-align: center; padding: 2rem 0; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 1rem;">
