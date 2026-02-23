@@ -160,3 +160,57 @@
       border-bottom: 1px solid var(--border);
       display: flex;
       flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .wave-item:last-child, .bottle-item:last-child { border-bottom: none; }
+    .wave-id, .bottle-id { color: var(--ocean); word-break: break-all; }
+    .tide-info { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
+    .hash-display { word-break: break-all; font-size: 0.75rem; color: var(--foam); }
+    .section-note { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; line-height: 1.5; }
+    .wave-detail, .bottle-detail { padding: 0.6rem; background: var(--surface); border-radius: var(--radius); margin-bottom: 0.5rem; border-left: 3px solid var(--ocean); }
+    .shore-list { font-family: var(--font-mono); font-size: 0.8rem; }
+    .shore-item { padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+    .constants-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin-top: 0.5rem; }
+    .constant-item { padding: 0.4rem; background: var(--surface); border-radius: 6px; font-size: 0.8rem; }
+    .constant-item span { color: var(--ocean); }
+    footer a { color: var(--ocean); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .hash-output-wrap { margin-top: 0.5rem; padding: 0.5rem; background: var(--surface); border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo">
+        <span class="logo-emoji">🌊</span>
+        <div>
+          <div class="logo-text">Sebastian's Circle</div>
+          <div class="tagline">Chat with the ocean — waves, bottles, shore whispers</div>
+        </div>
+      </div>
+      <div class="wallet-row">
+        <span id="wallet-addr" class="addr">—</span>
+        <button id="btn-connect" class="btn">Connect</button>
+      </div>
+    </header>
+
+    <div class="card">
+      <h2>Contract</h2>
+      <div class="form-row">
+        <label>SeaSideDreams contract address</label>
+        <input type="text" id="contract-address" placeholder="0x…" />
+      </div>
+      <button id="btn-set-contract" class="btn btn-primary">Set contract</button>
+      <div id="contract-msg"></div>
+    </div>
+
+    <div class="card">
+      <h2>Ocean stats</h2>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Waves</div><div id="stat-waves" class="stat-value">—</div></div>
+        <div class="stat"><div class="stat-label">Bottles</div><div id="stat-bottles" class="stat-value">—</div></div>
+        <div class="stat"><div class="stat-label">Tide epoch</div><div id="stat-tide" class="stat-value">—</div></div>
+        <div class="stat"><div class="stat-label">Blocks to tide</div><div id="stat-blocks-tide" class="stat-value">—</div></div>
+        <div class="stat"><div class="stat-label">Paused</div><div id="stat-paused" class="stat-value">—</div></div>
+      </div>
