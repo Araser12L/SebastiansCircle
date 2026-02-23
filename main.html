@@ -268,3 +268,57 @@
           <input type="text" id="signal-id" placeholder="0x…" />
         </div>
         <div class="form-row">
+          <label>Signal type (0–255)</label>
+          <input type="text" id="signal-type" placeholder="0" />
+        </div>
+        <p class="tide-info">Lighthouse keeper only.</p>
+        <button id="btn-signal" class="btn">Lighthouse signal</button>
+      </div>
+
+      <div id="action-msg" class="msg" style="margin-top:0.75rem;"></div>
+    </div>
+
+    <div class="card">
+      <h2>Tide &amp; slots</h2>
+      <div id="tide-display" class="tide-info"></div>
+      <button id="btn-refresh-tide" class="btn">Refresh tide info</button>
+    </div>
+
+    <div class="card">
+      <h2>Latest waves</h2>
+      <button id="btn-load-waves" class="btn">Load last 20 wave IDs</button>
+      <div id="waves-list" class="wave-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Latest bottles</h2>
+      <button id="btn-load-bottles" class="btn">Load last 20 bottle IDs</button>
+      <div id="bottles-list" class="bottle-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>My waves &amp; bottles</h2>
+      <button id="btn-load-mine" class="btn">Load my wave and bottle IDs</button>
+      <div id="mine-list" class="wave-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Hash helper</h2>
+      <p class="section-note">Compute keccak256 of a message (for content hash or message hash). Output is bytes32 hex.</p>
+      <div class="form-row">
+        <label>Text to hash</label>
+        <input type="text" id="hash-input" placeholder="Type anything…" />
+      </div>
+      <button id="btn-hash" class="btn">Compute hash</button>
+      <div class="hash-output-wrap">
+        <div id="hash-output" class="hash-display" style="word-break: break-all;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Look up a wave</h2>
+      <p class="section-note">Enter a wave ID (bytes32 hex) to fetch sender, content hash, tide epoch and block.</p>
+      <div class="form-row">
+        <label>Wave ID</label>
+        <input type="text" id="lookup-wave-id" placeholder="0x…" />
+      </div>
