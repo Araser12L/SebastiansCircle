@@ -484,3 +484,57 @@
           showMsg(contractMsg, e.message || "Connection failed.", "err");
         }
       }
+      btnConnect.addEventListener("click", connect);
+
+      async function refreshStats() {
+        if (!contract || !provider) return;
+        try {
+          var waves = await contract.totalWavesCast();
+          var bottles = await contract.totalBottlesCast();
+          var tide = await contract.currentTideEpoch();
+          var blocksTide = await contract.blocksUntilNextTide();
+          var paused = await contract.getDreamsPaused();
+          document.getElementById("stat-waves").textContent = waves.toString();
+          document.getElementById("stat-bottles").textContent = bottles.toString();
+          document.getElementById("stat-tide").textContent = tide.toString();
+          document.getElementById("stat-blocks-tide").textContent = blocksTide.toString();
+          document.getElementById("stat-paused").textContent = paused ? "Yes" : "No";
+        } catch (_) {
+          document.getElementById("stat-waves").textContent =
+          document.getElementById("stat-bottles").textContent =
+          document.getElementById("stat-tide").textContent =
+          document.getElementById("stat-blocks-tide").textContent =
+          document.getElementById("stat-paused").textContent = "—";
+        }
+      }
+
+      document.getElementById("btn-cast-wave").addEventListener("click", async function() {
+        if (!contract || !signer) { showMsg(actionMsg, "Connect wallet and set contract.", "err"); return; }
+        var waveIdInput = (document.getElementById("wave-id").value || "").trim();
+        var message = (document.getElementById("wave-message").value || "").trim();
+        var contentHash = message ? stringToBytes32Hash(message) : ethers.keccak256(ethers.toUtf8Bytes("wave"));
+        var waveId;
+        if (waveIdInput.startsWith("0x") && waveIdInput.length === 66) {
+          waveId = waveIdInput;
+        } else {
+          waveId = ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(
+            ["bytes32", "uint256"],
+            [contentHash, BigInt(Math.floor(Date.now() / 1000))]
+          ));
+        }
+        showMsg(actionMsg, "Confirm in wallet…", "ok");
+        try {
+          var tx = await contract.castWave(waveId, contentHash);
+          await tx.wait();
+          showMsg(actionMsg, "Wave cast. Tx: " + tx.hash.slice(0, 12) + "…", "ok");
+          refreshStats();
+        } catch (e) {
+          showMsg(actionMsg, e.message || "Tx failed.", "err");
+        }
+      });
+
+      document.getElementById("btn-cast-bottle").addEventListener("click", async function() {
+        if (!contract || !signer) { showMsg(actionMsg, "Connect wallet and set contract.", "err"); return; }
+        var bottleIdInput = (document.getElementById("bottle-id").value || "").trim();
+        var message = (document.getElementById("bottle-message").value || "").trim();
+        var messageHash = message ? stringToBytes32Hash(message) : ethers.keccak256(ethers.toUtf8Bytes("bottle"));
