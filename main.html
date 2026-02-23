@@ -376,3 +376,57 @@
     </div>
 
     <footer style="text-align: center; padding: 2rem 0; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 1rem;">
+      Sebastian's Circle — Chat with the ocean.<br/>
+      SeaSideDreams contract interface. Connect wallet, set contract, cast waves and bottles.<br/>
+      Tide epochs • Waves • Bottles • Shore whispers • Lighthouse. SeaSideDreams on-chain.
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      var ABI = [
+        "function castWave(bytes32 waveId, bytes32 contentHash) external",
+        "function castBottle(bytes32 bottleId, bytes32 messageHash) external payable",
+        "function shoreWhisper(bytes32 shoreId, bytes32 whisperHash) external",
+        "function lighthouseSignal(bytes32 signalId, uint8 signalType) external",
+        "function totalWavesCast() external view returns (uint256)",
+        "function totalBottlesCast() external view returns (uint256)",
+        "function currentTideEpoch() external view returns (uint256)",
+        "function blocksUntilNextTide() external view returns (uint256)",
+        "function getDreamsPaused() external view returns (bool)",
+        "function waveIdsBySender(address) external view returns (bytes32[])",
+        "function bottleIdsBySender(address) external view returns (bytes32[])",
+        "function getLastNWaveIds(uint256 n) external view returns (bytes32[])",
+        "function getLastNBottleIds(uint256 n) external view returns (bytes32[])",
+        "function getWave(bytes32 waveId) external view returns (address sender, bytes32 contentHash, uint256 tideEpoch, uint256 castAtBlock)",
+        "function getBottle(bytes32 bottleId) external view returns (address sender, bytes32 messageHash, uint256 feeWei, uint256 castAtBlock)",
+        "function computeWaveId(bytes32 senderHash, uint256 nonce) external pure returns (bytes32)",
+        "function computeBottleId(bytes32 senderHash, uint256 nonce) external pure returns (bytes32)",
+        "function computeShoreId(string calldata shoreName) external view returns (bytes32)",
+        "function contentHashFromBytes(bytes calldata data) external pure returns (bytes32)",
+        "function BOTTLE_FEE_WEI() external view returns (uint256)",
+        "function waveSlotsRemaining() external view returns (uint256)",
+        "function getConstantsSnapshot() external view returns (uint256 tideBlk, uint256 waveCap, uint256 whisperCap, uint256 bottleFee, uint256 maxBottle, uint256 maxBatch)",
+        "function TIDE_BLOCKS() external view returns (uint256)",
+        "function WAVES_PER_TIDE_CAP() external view returns (uint256)",
+        "function MAX_BOTTLES_TOTAL() external view returns (uint256)",
+        "function tideBlocksConstant() external pure returns (uint256)",
+        "function wavesPerTideCapConstant() external pure returns (uint256)",
+        "function maxBottlesTotalConstant() external pure returns (uint256)",
+        "function shoreWhisperCount(bytes32 shoreId) external view returns (uint256)"
+      ];
+
+      var provider, signer, contractAddress = "", contract = null;
+
+      var walletEl = document.getElementById("wallet-addr");
+      var btnConnect = document.getElementById("btn-connect");
+      var contractInput = document.getElementById("contract-address");
+      var btnSetContract = document.getElementById("btn-set-contract");
+      var contractMsg = document.getElementById("contract-msg");
+      var actionMsg = document.getElementById("action-msg");
+
+      function showMsg(container, text, type) {
+        container.innerHTML = text ? "<div class=\"msg " + type + "\">" + text + "</div>" : "";
+      }
+
+      function toBytes32Hex(str) {
