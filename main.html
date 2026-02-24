@@ -700,3 +700,50 @@
       });
 
       document.getElementById("btn-hash").addEventListener("click", function() {
+        var text = (document.getElementById("hash-input").value || "").trim();
+        var hash = text ? ethers.keccak256(ethers.toUtf8Bytes(text)) : "0x" + "0".repeat(64);
+        document.getElementById("hash-output").textContent = hash;
+      });
+
+      document.getElementById("btn-shore-count").addEventListener("click", async function() {
+        if (!contract || !provider) { document.getElementById("shore-count-result").textContent = "Set contract first."; return; }
+        var shoreInput = (document.getElementById("shore-name").value || "").trim();
+        if (!shoreInput) { document.getElementById("shore-count-result").textContent = "Enter a shore name or 0x… ID."; return; }
+        try {
+          var shoreId = shoreInput.startsWith("0x") && shoreInput.length === 66 ? shoreInput : await contract.computeShoreId(shoreInput);
+          var count = await contract.shoreWhisperCount(shoreId);
+          document.getElementById("shore-count-result").textContent = "Shore \"" + shoreInput.slice(0, 20) + (shoreInput.length > 20 ? "…" : "") + "\" has " + count.toString() + " whisper(s).";
+        } catch (e) {
+          document.getElementById("shore-count-result").textContent = "Error: " + (e.message || "load failed");
+        }
+      });
+
+      document.getElementById("btn-load-constants").addEventListener("click", async function() {
+        if (!contract || !provider) { document.getElementById("constants-display").textContent = "Set contract first."; return; }
+        try {
+          var tideBlocks = await contract.TIDE_BLOCKS ? await contract.TIDE_BLOCKS() : await contract.tideBlocksConstant();
+          var waveCap = await contract.WAVES_PER_TIDE_CAP ? await contract.WAVES_PER_TIDE_CAP() : await contract.wavesPerTideCapConstant();
+          var bottleFee = await contract.BOTTLE_FEE_WEI();
+          var maxBottles = await contract.MAX_BOTTLES_TOTAL ? await contract.MAX_BOTTLES_TOTAL() : await contract.maxBottlesTotalConstant();
+          var html = "<div class=\"constant-item\">TIDE_BLOCKS <span>" + tideBlocks.toString() + "</span></div>";
+          html += "<div class=\"constant-item\">WAVES_PER_TIDE_CAP <span>" + waveCap.toString() + "</span></div>";
+          html += "<div class=\"constant-item\">BOTTLE_FEE <span>" + ethers.formatEther(bottleFee) + " ETH</span></div>";
+          html += "<div class=\"constant-item\">MAX_BOTTLES_TOTAL <span>" + maxBottles.toString() + "</span></div>";
+          document.getElementById("constants-display").innerHTML = html;
+        } catch (e) {
+          try {
+            var snap = await contract.getConstantsSnapshot();
+            var html = "<div class=\"constant-item\">tideBlocks <span>" + snap[0].toString() + "</span></div>";
+            html += "<div class=\"constant-item\">wavesPerTideCap <span>" + snap[1].toString() + "</span></div>";
+            html += "<div class=\"constant-item\">bottleFeeWei <span>" + ethers.formatEther(snap[3]) + " ETH</span></div>";
+            html += "<div class=\"constant-item\">maxBottlesTotal <span>" + snap[4].toString() + "</span></div>";
+            document.getElementById("constants-display").innerHTML = html;
+          } catch (e2) {
+            document.getElementById("constants-display").textContent = "Error: " + (e.message || e2.message || "load failed");
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
