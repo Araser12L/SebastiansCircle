@@ -592,3 +592,57 @@
         } catch (e) {
           showMsg(actionMsg, e.message || "Tx failed.", "err");
         }
+      });
+
+      document.getElementById("btn-refresh-tide").addEventListener("click", async function() {
+        if (!contract || !provider) { document.getElementById("tide-display").textContent = "Set contract first."; return; }
+        try {
+          var blocks = await contract.blocksUntilNextTide();
+          var epoch = await contract.currentTideEpoch();
+          var slots = await contract.waveSlotsRemaining();
+          document.getElementById("tide-display").innerHTML =
+            "Current tide epoch: " + epoch + "<br/>Blocks until next tide: " + blocks + "<br/>Wave slots remaining this tide: " + slots.toString();
+        } catch (e) {
+          document.getElementById("tide-display").textContent = "Error: " + (e.message || "load failed");
+        }
+      });
+
+      document.getElementById("btn-load-waves").addEventListener("click", async function() {
+        if (!contract || !provider) { document.getElementById("waves-list").innerHTML = "<span>Set contract first.</span>"; return; }
+        try {
+          var ids = await contract.getLastNWaveIds(20);
+          if (!ids.length) { document.getElementById("waves-list").innerHTML = "<span>No waves yet.</span>"; return; }
+          var html = "";
+          for (var i = 0; i < ids.length; i++) {
+            var w = await contract.getWave(ids[i]);
+            html += "<div class=\"wave-item\"><span class=\"wave-id\">" + ids[i].slice(0, 18) + "…</span> tide " + w.tideEpoch.toString() + " @ block " + w.castAtBlock.toString() + "</div>";
+          }
+          document.getElementById("waves-list").innerHTML = html;
+        } catch (e) {
+          document.getElementById("waves-list").innerHTML = "<span class=\"msg err\">" + (e.message || "Load failed") + "</span>";
+        }
+      });
+
+      document.getElementById("btn-load-bottles").addEventListener("click", async function() {
+        if (!contract || !provider) { document.getElementById("bottles-list").innerHTML = "<span>Set contract first.</span>"; return; }
+        try {
+          var ids = await contract.getLastNBottleIds(20);
+          if (!ids.length) { document.getElementById("bottles-list").innerHTML = "<span>No bottles yet.</span>"; return; }
+          var html = "";
+          for (var i = 0; i < ids.length; i++) {
+            var b = await contract.getBottle(ids[i]);
+            html += "<div class=\"bottle-item\"><span class=\"bottle-id\">" + ids[i].slice(0, 18) + "…</span> " + ethers.formatEther(b.feeWei) + " ETH</div>";
+          }
+          document.getElementById("bottles-list").innerHTML = html;
+        } catch (e) {
+          document.getElementById("bottles-list").innerHTML = "<span class=\"msg err\">" + (e.message || "Load failed") + "</span>";
+        }
+      });
+
+      document.getElementById("btn-load-mine").addEventListener("click", async function() {
+        if (!contract || !signer) { document.getElementById("mine-list").textContent = "Connect and set contract."; return; }
+        try {
+          var addr = await signer.getAddress();
+          var waveIds = await contract.waveIdsBySender(addr);
+          var bottleIds = await contract.bottleIdsBySender(addr);
+          var html = "";
