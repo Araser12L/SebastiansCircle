@@ -646,3 +646,57 @@
           var waveIds = await contract.waveIdsBySender(addr);
           var bottleIds = await contract.bottleIdsBySender(addr);
           var html = "";
+          if (waveIds.length) {
+            html += "<div><strong>My waves:</strong> " + waveIds.length + "</div>";
+            waveIds.slice(0, 10).forEach(function(id) { html += "<div class=\"wave-item\"><span class=\"wave-id\">" + id.slice(0, 22) + "…</span></div>"; });
+          }
+          if (bottleIds.length) {
+            html += "<div><strong>My bottles:</strong> " + bottleIds.length + "</div>";
+            bottleIds.slice(0, 10).forEach(function(id) { html += "<div class=\"bottle-item\"><span class=\"bottle-id\">" + id.slice(0, 22) + "…</span></div>"; });
+          }
+          if (!html) html = "<div>No waves or bottles from you yet.</div>";
+          document.getElementById("mine-list").innerHTML = html;
+        } catch (e) {
+          document.getElementById("mine-list").textContent = "Error: " + (e.message || "load failed");
+        }
+      });
+
+      document.getElementById("btn-lookup-wave").addEventListener("click", async function() {
+        if (!contract || !provider) { return; }
+        var waveId = (document.getElementById("lookup-wave-id").value || "").trim();
+        if (!waveId.startsWith("0x") || waveId.length !== 66) {
+          document.getElementById("lookup-wave-result").style.display = "block";
+          document.getElementById("lookup-wave-result").innerHTML = "Enter a valid 32-byte hex wave ID (0x + 64 hex chars).";
+          return;
+        }
+        try {
+          var w = await contract.getWave(waveId);
+          var html = "Sender: " + w.sender + "<br/>Content hash: <span class=\"hash-display\">" + w.contentHash + "</span><br/>Tide epoch: " + w.tideEpoch.toString() + "<br/>Cast at block: " + w.castAtBlock.toString();
+          document.getElementById("lookup-wave-result").innerHTML = html;
+          document.getElementById("lookup-wave-result").style.display = "block";
+        } catch (e) {
+          document.getElementById("lookup-wave-result").innerHTML = "Error: " + (e.message || "lookup failed");
+          document.getElementById("lookup-wave-result").style.display = "block";
+        }
+      });
+
+      document.getElementById("btn-lookup-bottle").addEventListener("click", async function() {
+        if (!contract || !provider) { return; }
+        var bottleId = (document.getElementById("lookup-bottle-id").value || "").trim();
+        if (!bottleId.startsWith("0x") || bottleId.length !== 66) {
+          document.getElementById("lookup-bottle-result").style.display = "block";
+          document.getElementById("lookup-bottle-result").innerHTML = "Enter a valid 32-byte hex bottle ID (0x + 64 hex chars).";
+          return;
+        }
+        try {
+          var b = await contract.getBottle(bottleId);
+          var html = "Sender: " + b.sender + "<br/>Message hash: <span class=\"hash-display\">" + b.messageHash + "</span><br/>Fee: " + ethers.formatEther(b.feeWei) + " ETH<br/>Cast at block: " + b.castAtBlock.toString();
+          document.getElementById("lookup-bottle-result").innerHTML = html;
+          document.getElementById("lookup-bottle-result").style.display = "block";
+        } catch (e) {
+          document.getElementById("lookup-bottle-result").innerHTML = "Error: " + (e.message || "lookup failed");
+          document.getElementById("lookup-bottle-result").style.display = "block";
+        }
+      });
+
+      document.getElementById("btn-hash").addEventListener("click", function() {
