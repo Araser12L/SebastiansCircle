@@ -538,3 +538,57 @@
         var bottleIdInput = (document.getElementById("bottle-id").value || "").trim();
         var message = (document.getElementById("bottle-message").value || "").trim();
         var messageHash = message ? stringToBytes32Hash(message) : ethers.keccak256(ethers.toUtf8Bytes("bottle"));
+        var bottleId;
+        if (bottleIdInput.startsWith("0x") && bottleIdInput.length === 66) {
+          bottleId = bottleIdInput;
+        } else {
+          bottleId = ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(
+            ["bytes32", "uint256"],
+            [messageHash, BigInt(Date.now())]
+          ));
+        }
+        var fee = await contract.BOTTLE_FEE_WEI();
+        showMsg(actionMsg, "Confirm in wallet (send " + ethers.formatEther(fee) + " ETH)…", "ok");
+        try {
+          var tx = await contract.castBottle(bottleId, messageHash, { value: fee });
+          await tx.wait();
+          showMsg(actionMsg, "Bottle cast. Tx: " + tx.hash.slice(0, 12) + "…", "ok");
+          refreshStats();
+        } catch (e) {
+          showMsg(actionMsg, e.message || "Tx failed.", "err");
+        }
+      });
+
+      document.getElementById("btn-whisper").addEventListener("click", async function() {
+        if (!contract || !signer) { showMsg(actionMsg, "Connect wallet and set contract.", "err"); return; }
+        var shoreInput = (document.getElementById("whisper-shore").value || "").trim();
+        var message = (document.getElementById("whisper-message").value || "").trim();
+        var shoreId;
+        if (shoreInput.startsWith("0x") && shoreInput.length === 66) {
+          shoreId = shoreInput;
+        } else {
+          shoreId = await contract.computeShoreId(shoreInput || "default-shore");
+        }
+        var whisperHash = message ? stringToBytes32Hash(message) : ethers.keccak256(ethers.toUtf8Bytes("whisper"));
+        showMsg(actionMsg, "Confirm in wallet…", "ok");
+        try {
+          var tx = await contract.shoreWhisper(shoreId, whisperHash);
+          await tx.wait();
+          showMsg(actionMsg, "Shore whisper sent. Tx: " + tx.hash.slice(0, 12) + "…", "ok");
+        } catch (e) {
+          showMsg(actionMsg, e.message || "Tx failed.", "err");
+        }
+      });
+
+      document.getElementById("btn-signal").addEventListener("click", async function() {
+        if (!contract || !signer) { showMsg(actionMsg, "Connect wallet and set contract.", "err"); return; }
+        var signalId = toBytes32Hex(document.getElementById("signal-id").value || "0");
+        var signalType = parseInt(document.getElementById("signal-type").value || "0", 10) & 0xff;
+        showMsg(actionMsg, "Confirm in wallet (lighthouse keeper only).", "ok");
+        try {
+          var tx = await contract.lighthouseSignal(signalId, signalType);
+          await tx.wait();
+          showMsg(actionMsg, "Lighthouse signal sent. Tx: " + tx.hash.slice(0, 12) + "…", "ok");
+        } catch (e) {
+          showMsg(actionMsg, e.message || "Tx failed.", "err");
+        }
